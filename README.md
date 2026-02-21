@@ -10,12 +10,6 @@
 
 ---
 
-## 📋 Tópicos
-
-`angular` `typescript` `upload` `file-upload` `bootstrap` `standalone-components` `signals` `rxjs` `drag-and-drop` `frontend` `study-project`
-
----
-
 ## 🚀 Funcionalidades
 
 - Upload de **arquivo único** com drag and drop
@@ -119,4 +113,5 @@ src/
 
 ## 👨‍💻 Autor
 
-Feito por **cesaravb** — projeto de estudo sobre upload de arquivos com Angular e MinIO.
+**Cesar Augusto Vieira Bezerra**
+[portfolio.cesaraugusto.dev.br](https://portfolio.cesaraugusto.dev.br/)
