@@ -8,6 +8,8 @@
 
 > Frontend Angular de estudo para upload de arquivos individuais e em lote com feedback visual de progresso integrado ao microservico upload-arquivos-api
 
+<img width="1919" height="868" alt="image" src="https://github.com/user-attachments/assets/c6d5d248-3ba3-42fe-b612-75ebe75e843d" />
+
 ---
 
 ## 🚀 Funcionalidades
