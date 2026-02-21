@@ -1,0 +1,16 @@
+/* App root layout to keep footer as last element and avoid viewport scroll */
+app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+app-upload {
+  flex: 1 1 auto; /* take available space */
+  min-height: 0; /* allow children to scroll inside */
+}
+
+app-footer {
+  flex-shrink: 0; /* keep footer visible as last element */
+}
+

@@ -1,0 +1,214 @@
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="logo">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <span>upload<strong>arquivos</strong></span>
+      </div>
+      <span class="badge-test">
+        <i class="fa-solid fa-flask me-1"></i> Projeto de Teste
+      </span>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="container py-5">
+
+      <!-- Info card -->
+      <div class="info-card mb-4">
+        <div class="info-icon"><i class="fa-solid fa-circle-info"></i></div>
+        <div>
+          <p class="mb-0">
+            <strong>O que é o bucket?</strong> O bucket é como uma pasta no MinIO onde seus arquivos serão
+            armazenados. Cada microserviço pode enviar arquivos para um bucket diferente — basta informar o
+            nome desejado. Se o bucket ainda não existir, ele será criado automaticamente.
+          </p>
+          <p class="mt-1 mb-0 text-muted" style="font-size:0.85rem">
+            <i class="fa-solid fa-triangle-exclamation me-1 text-warning"></i>
+            Este é um projeto de demonstração. Não envie arquivos sensíveis ou confidenciais.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card principal -->
+      <div class="upload-card">
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab-btn" [class.active]="activeTab() === 'single'" (click)="activeTab.set('single')">
+            <i class="fa-solid fa-file-arrow-up me-2"></i>Arquivo único
+          </button>
+          <button class="tab-btn" [class.active]="activeTab() === 'batch'" (click)="activeTab.set('batch')">
+            <i class="fa-solid fa-layer-group me-2"></i>Múltiplos arquivos
+          </button>
+        </div>
+
+        <div class="card-body-inner">
+
+          <!-- Campo bucket -->
+          <div class="mb-4">
+            <label class="field-label">
+              <i class="fa-solid fa-bucket me-2"></i>Nome do Bucket
+            </label>
+            <input
+              type="text"
+              class="field-input"
+              [(ngModel)]="bucket"
+              placeholder="ex: documentos, imagens, relatorios"
+              [class.is-invalid]="submitted && !bucket"
+            />
+            @if (submitted && !bucket) {
+              <div class="field-error">Informe o nome do bucket</div>
+            }
+          </div>
+
+          <!-- Upload único -->
+          @if (activeTab() === 'single') {
+            <div class="mb-4">
+              <label class="field-label">
+                <i class="fa-solid fa-file me-2"></i>Arquivo
+              </label>
+              <div
+                class="drop-zone"
+                [class.has-file]="singleFile"
+                [class.drag-over]="isDragging"
+                (dragover)="onDragOver($event)"
+                (dragleave)="isDragging = false"
+                (drop)="onDropSingle($event)"
+                (click)="singleInput.click()"
+              >
+                @if (!singleFile) {
+                  <div class="drop-placeholder">
+                    <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                    <p class="mb-1">Arraste o arquivo ou <span class="link">clique para selecionar</span></p>
+                    <small class="text-muted">Qualquer tipo de arquivo</small>
+                  </div>
+                } @else {
+                  <div class="file-preview">
+                    <i class="fa-solid fa-file-circle-check file-ok-icon"></i>
+                    <div>
+                      <p class="mb-0 fw-500">{{ singleFile.name }}</p>
+                      <small class="text-muted">{{ formatSize(singleFile.size) }}</small>
+                    </div>
+                    <button class="remove-btn" (click)="removeSingle($event)">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                }
+              </div>
+              <input #singleInput type="file" hidden (change)="onSingleFileChange($event)" />
+              @if (submitted && !singleFile) {
+                <div class="field-error">Selecione um arquivo</div>
+              }
+            </div>
+          }
+
+          <!-- Upload lote -->
+          @if (activeTab() === 'batch') {
+            <div class="mb-4">
+              <label class="field-label">
+                  <i class="fa-solid fa-folder-open me-2"></i>Arquivos
+                </label>
+              <div
+                class="drop-zone"
+                [class.has-file]="batchFiles.length > 0"
+                [class.drag-over]="isDragging"
+                (dragover)="onDragOver($event)"
+                (dragleave)="isDragging = false"
+                (drop)="onDropBatch($event)"
+                (click)="batchInput.click()"
+              >
+                @if (batchFiles.length === 0) {
+                  <div class="drop-placeholder">
+                    <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                    <p class="mb-1">Arraste os arquivos ou <span class="link">clique para selecionar</span></p>
+                    <small class="text-muted">Selecione quantos arquivos quiser</small>
+                  </div>
+                } @else {
+                  <div class="batch-list">
+                    @for (f of batchFiles; track f.name; let i = $index) {
+                      <div class="batch-item">
+                        <i class="fa-solid fa-file me-2"></i>
+                        <span class="batch-name">{{ f.name }}</span>
+                        <span class="batch-size">{{ formatSize(f.size) }}</span>
+                        <button class="remove-btn" (click)="removeBatchFile(i, $event)">
+                          <i class="fa-solid fa-xmark"></i>
+                        </button>
+                      </div>
+                    }
+                    <div class="add-more" (click)="batchInput.click(); $event.stopPropagation()">
+                      <i class="fa-solid fa-plus me-1"></i> Adicionar mais
+                    </div>
+                  </div>
+                }
+              </div>
+              <input #batchInput type="file" multiple hidden (change)="onBatchFileChange($event)" />
+              @if (submitted && batchFiles.length === 0) {
+                <div class="field-error">Selecione ao menos um arquivo</div>
+              }
+            </div>
+          }
+
+          <!-- Botão -->
+          <button class="upload-btn" (click)="submit()" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm me-2"></span> Enviando...
+            } @else {
+              <i class="fa-solid fa-cloud-arrow-up me-2"></i>
+              Enviar arquivo{{ activeTab() === 'batch' ? 's' : '' }}
+            }
+          </button>
+
+          <!-- Erro -->
+          @if (errorMsg) {
+            <div class="result-box error mt-4">
+              <i class="fa-solid fa-circle-xmark me-2"></i>{{ errorMsg }}
+            </div>
+          }
+
+          <!-- Resultado -->
+          @if (results.length > 0) {
+            <div class="result-section mt-4">
+              <h6 class="result-title">
+                <i class="fa-solid fa-circle-check me-2 text-success"></i>
+                {{ results.length === 1 ? 'Arquivo enviado com sucesso!' : results.length + ' arquivos enviados com sucesso!' }}
+              </h6>
+              <div class="result-list">
+                @for (r of results; track r.nomeArquivo) {
+                  <div class="result-item">
+                    <div class="result-filename">
+                      <i class="fa-solid fa-file me-2"></i>{{ r.nomeArquivo }}
+                    </div>
+                    <div class="result-url-row">
+                      <span class="result-url">{{ r.url }}</span>
+                      <button class="copy-btn" (click)="copyUrl(r.url)" title="Copiar URL">
+                        <i class="fa-solid fa-copy"></i>
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toasts -->
+  <div class="toast-container">
+    @for (t of toasts; track t.id) {
+      <div class="toast" [class.toast-success]="t.type === 'success'" [class.toast-error]="t.type === 'error'">
+        <div class="toast-message">{{ t.message }}</div>
+        <button class="toast-close" (click)="dismissToast(t.id)">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    }
+  </div>
+
+</div>

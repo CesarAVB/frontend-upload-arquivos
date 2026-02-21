@@ -1,1 +1,40 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --primary: #1a6cf5;
+  --primary-light: #e8f0fe;
+  --primary-dark: #1251c0;
+  --accent: #f5a623;
+  --surface: #ffffff;
+  --surface-2: #f8f9fc;
+  --border: #e2e8f0;
+  --text: #1a202c;
+  --text-muted: #64748b;
+  --success: #10b981;
+  --danger: #ef4444;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(26, 108, 245, 0.08);
+  --shadow-hover: 0 8px 32px rgba(26, 108, 245, 0.16);
+  --footer-height: 44px;
+  --header-height: 52px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, app-root {
+  height: 100vh;
+  margin: 0;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--surface-2);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* prevent viewport scrollbar */
+  padding-bottom: var(--footer-height); /* reserve space for fixed footer */
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Syne', sans-serif;
+}
